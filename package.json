@@ -1,5 +1,5 @@
 {
-  "version": "1.0.9",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -31,24 +31,11 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "passport-magic-login",
-  "description": "Passwordless authentication with magic links for Passport.js 🔑",
-  "author": "Max Stoiber",
-  "module": "dist/passport-magic-login.esm.js",
-  "size-limit": [
-    {
-      "path": "dist/passport-magic-login.cjs.production.min.js",
-      "limit": "10 KB"
-    },
-    {
-      "path": "dist/passport-magic-login.esm.js",
-      "limit": "10 KB"
-    }
-  ],
+  "name": "passport-jiogames",
+  "description": "Jiogames authentication strategy for Passport.js",
   "devDependencies": {
     "@size-limit/preset-small-lib": "^4.9.1",
     "@types/express": "^4.17.11",
-    "@types/jsonwebtoken": "^8.5.0",
     "@types/passport": "^1.0.5",
     "husky": "^4.3.7",
     "size-limit": "^4.9.1",

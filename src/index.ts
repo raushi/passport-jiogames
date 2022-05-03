@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { StrategyCreatedStatic } from 'passport';
-import { generateToken, decodeToken } from './token';
 
 type VerifyCallback = (
   payload: any,
@@ -9,36 +8,26 @@ type VerifyCallback = (
 ) => void;
 
 interface Options {
-  secret: string;
-  callbackUrl: string;
-  sendMagicLink: (
+  sendOtp: (
     destination: string,
-    href: string,
-    verificationCode: string,
     req: Request
   ) => Promise<void>;
   verify: VerifyCallback;
-
-  /** @deprecated */
-  confirmUrl?: string;
 }
 
-class MagicLoginStrategy {
-  name: string = 'magiclogin';
+class JioGamesStrategy {
+  name: string = 'jiogames';
 
-  constructor(private _options: Options) {}
+  constructor(private _options: Options) { }
 
   authenticate(
-    this: StrategyCreatedStatic & MagicLoginStrategy,
+    this: StrategyCreatedStatic & JioGamesStrategy,
     req: Request
   ): void {
     const self = this;
-    const payload = decodeToken(
-      self._options.secret,
-      req.query.token as string
-    );
+    const payload = req.method === 'GET' ? req.query : req.body;
 
-    const verifyCallback = function(err?: Error, user?: Object, info?: any) {
+    const verifyCallback = function (err?: Error, user?: Object, info?: any) {
       if (err) {
         return self.error(err);
       } else if (!user) {
@@ -58,35 +47,19 @@ class MagicLoginStrategy {
       return;
     }
 
-    const code = Math.floor(Math.random() * 90000) + 10000 + '';
-    const jwt = generateToken(this._options.secret, {
-      ...payload,
-      code,
-    });
-
     this._options
-      .sendMagicLink(
+      .sendOtp(
         payload.destination,
-        `${this._options.callbackUrl}?token=${jwt}`,
-        code,
         req
       )
       .then(() => {
-        res.json({ success: true, code });
+        res.json({ success: true });
       })
       .catch((error: any) => {
         console.error(error);
         res.json({ success: false, error });
       });
   };
-
-  /** @deprecated */
-  confirm = (req: Request, res: Response): void => {
-    console.warn(
-      `magicLink.confirm was removed in v1.0.7, it is no longer necessary.`
-    );
-    res.redirect(`${this._options.callbackUrl}?token=${req.query.token}`);
-  };
 }
 
-export default MagicLoginStrategy;
+export default JioGamesStrategy;
